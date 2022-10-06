@@ -56,11 +56,12 @@ table {
 }
 body {
   font-family: 'Source Sans Pro', sans-serif;
-  background-color: ${props => props.theme.bgColor};
-  color: ${props => props.theme.textColor};
+  background-color: ${(props) => props.theme.bgColor}; // index에서 themeProcider 안에 App이 있으므로 여기(App)에서 theme의 props에 접근이 가능하다. 
+  color: ${(props) => props.theme.textColor}; 
 }
 a {
   text-decoration: none;
+  color: inherit;
 }
 `
 // <></> 는 fragment로 빈 태그(유령태그)이다. 원칙적으로는 단 하나의 element를 리턴해야하므로, <GlobalStyle /> 까지 포함하여 리턴하려면 원래는 <div>태그로 묶어야하지만, 그럴 경우 <div>태그가 너무 남발되어 비효율적. 그래서 fragment라는 유령태그로 감싸준다.
