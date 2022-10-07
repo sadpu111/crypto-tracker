@@ -7,6 +7,12 @@ const Loader = styled.span`
   display: block;
 `;
 
+const Img = styled.img`
+  width: 35px;
+  height: 35px;
+  margin-right:20px;
+`;
+
 const Container = styled.div`
   padding: 0px 10px;
   max-width: 480px;
@@ -28,7 +34,8 @@ const Coin = styled.li`
   margin-bottom: 10px;
   border-radius: 10px;
   a { // Coin 컴포넌트 내의 anchor는 아래와 같은 스타일 적용
-    display: block; // 링크뿐만 아니라 영역을 눌러도 이동
+    display: flex; // 링크뿐만 아니라 영역을 눌러도 이동
+    align-items: center;
     transition: color 0.2s ease-in; // 색이 전환(변화)되는데 0.2초 지연 및 ease-in 효과
     padding: 20px;
   }
@@ -78,11 +85,14 @@ function Coins () {
         <CoinsList>
         {coins.map((coin) => (
         <Coin key={coin.id}>
-          <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link> 
+          <Link to={`/${coin.id}`} state={coin}> 
+            <Img src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}></Img>
+            {coin.name} &rarr;</Link> 
         </Coin>))}
       </CoinsList>}
     </Container>
   )
 }
+// <Link state={} /> => 브라우저가 이미 갖고 있는 데이터를 다른 화면으로 전달. 이를 통해 api를 읽는 시간동안 화면에 전달받은 데이터를 표시할 수 있다. 로딩화면 생략 가능.
 
 export default Coins
