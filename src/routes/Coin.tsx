@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {useParams} from "react-router"
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -42,6 +42,16 @@ function Coin () {
 /*   const location = useLocation(); // useLocation() => location 관련 객체 전달. 여기서 <Link>안의 state에 입력한 object 확인 가능.
   console.log(location); */
   const {state} = useLocation() as LocationState; // API로부터 데이터를 끌어오는 것이 아니고, 브라우저의 state의 데이터를 그대로 표시하는 것.그런데 해당 coin컴포넌트를 클릭해야 <Link>의 state가 생성이 되므로 바로 특정 코인 url을 입력하여 접근할 경우 빈 페이지가 열린다. state로부터 받아올 데이터가 없기 때문. 따라서 아래 {state?.name || "Loding..."}와 같이 입력 => state가 존재한다면 state.name을 표시하고, 아니라면 "Loding..." 출력.
+  const [info, setInfo] = useState({});
+  const [priceInfo, setPriceInfo] = useState({});
+  useEffect(() => {
+    (async () => {
+      const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
+      const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
+      setInfo(infoData);
+      setPriceInfo(priceData);
+    })
+    ();}, []);
   return <Container>
   <Header>
     <Title>{state?.name || "Loding..."}</Title> 
