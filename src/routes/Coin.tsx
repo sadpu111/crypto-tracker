@@ -23,6 +23,27 @@ const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: 45px;
 `
+const Overview = styled.div` // 검은색 박스
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+`;
+const OverviewItem = styled.div` // 검은색 박스 안 아이템
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  span:first-child {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+`;
+const Description = styled.p`
+  margin: 20px 0px;
+`;
 
 interface LocationState { // object의 interface 정의.
   state: {
@@ -113,12 +134,42 @@ function Coin () {
       setPriceInfo(priceData);
       setLoading(false); // API로부터 request하고나서는 setLoading을 false 처리해줘야 한다.
     })();
-  }, [coinId]);
+  }, [coinId]); // [coinId] -> coinId가 변할 때만 함수 실행. hook의 최고 성능을 이끌어내기 위해서는 hook 안에 사용된 것은 dependency([]) 안에 넣어줘야 한다. 현재 코드에서는 비어도 된다([]). coinId는 url에 위치하므로 절대 변하지 않기 때문에..
   return <Container>
   <Header>
     <Title>{state?.name || "Loding..."}</Title> 
   </Header>
-  {loading ? <Loader>Loading...</Loader> : null}
+  {loading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          <Overview>
+            <OverviewItem>
+              <span>Rank:</span>
+              <span>{info?.rank}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Symbol:</span>
+              <span>${info?.symbol}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Open Source:</span>
+              <span>{info?.open_source ? "Yes" : "No"}</span>
+            </OverviewItem>
+          </Overview>
+          <Description>{info?.description}</Description>
+          <Overview>
+            <OverviewItem>
+              <span>Total Suply:</span>
+              <span>{priceInfo?.total_supply}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Max Supply:</span>
+              <span>{priceInfo?.max_supply}</span>
+            </OverviewItem>
+          </Overview>
+        </>
+      )}
   </Container>;
 } 
 
