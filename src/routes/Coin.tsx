@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import {useParams} from "react-router"
-import { useLocation } from "react-router-dom";
+import {useParams, useLocation, Outlet} from "react-router"
 import styled from "styled-components";
+import Price from "./Price";
+import Chart from "./Chart";
 
 const Container = styled.div`
   padding: 0px 10px;
@@ -137,7 +138,7 @@ function Coin () {
   }, [coinId]); // [coinId] -> coinId가 변할 때만 함수 실행. hook의 최고 성능을 이끌어내기 위해서는 hook 안에 사용된 것은 dependency([]) 안에 넣어줘야 한다. 현재 코드에서는 비어도 된다([]). coinId는 url에 위치하므로 절대 변하지 않기 때문에..
   return <Container>
   <Header>
-    <Title>{state?.name || "Loding..."}</Title> 
+    <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title> 
   </Header>
   {loading ? (
         <Loader>Loading...</Loader>
@@ -168,6 +169,7 @@ function Coin () {
               <span>{priceInfo?.max_supply}</span>
             </OverviewItem>
           </Overview>
+          <Outlet />
         </>
       )}
   </Container>;

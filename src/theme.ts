@@ -7,4 +7,4 @@ const theme:DefaultTheme = {
 }
 
 
-export default theme // defaultd인 경우 import할 때 {}없이! export {theme}라면 import할 때 import {theme} ~ !
+export default theme // default인 경우 import할 때 {}없이! export {theme}라면 import할 때 import {theme} ~ !
