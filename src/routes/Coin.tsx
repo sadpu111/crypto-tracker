@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import {useParams, useLocation, Outlet} from "react-router"
+import {useParams, useLocation, Outlet, Link, useMatch} from "react-router-dom";
 import styled from "styled-components";
-import Price from "./Price";
-import Chart from "./Chart";
 
 const Container = styled.div`
   padding: 0px 10px;
@@ -24,14 +22,14 @@ const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: 45px;
 `
-const Overview = styled.div` // 검은색 박스
+const Overview = styled.div`
   display: flex;
   justify-content: space-between;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 10px 20px;
   border-radius: 10px;
 `;
-const OverviewItem = styled.div` // 검은색 박스 안 아이템
+const OverviewItem = styled.div` 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,7 +44,28 @@ const Description = styled.p`
   margin: 20px 0px;
 `;
 
-interface LocationState { // object의 interface 정의.
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 25px 0px;
+  gap: 10px;
+`;
+
+const Tab = styled.span<{isActive : boolean}>` // <{isActive : boolean}> => isActive라는 prop을 추가하며 이는 boolean 타입이다. 이를 하단의 priveMatch와 cahrtMatch로 전달할 수 있다.
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 400;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 7px 0px;
+  border-radius: 8px;
+  color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor};
+  a {
+    display: block;
+  }
+`;
+
+interface LocationState { 
   state: {
     id: string;
     name: string;
@@ -60,7 +79,7 @@ interface LocationState { // object의 interface 정의.
 
  
 
-interface InfoData { // object의 key들을 가져오기 위해 콘솔에 출력 후(console.log(infoData)) 우클릭하여 "store object as global variable"을 선택하면 temp1로 브라우저에 저장. 이를 다시 object.keys(temp1).join() 메서드로 key만 호출. value는 map과 typeof 메서드를 활용하여 추출. "Object.values(temp1).map(v => typeof v)"
+interface InfoData { 
   id:string ;
   name: string ;
   symbol: string ;
@@ -69,8 +88,6 @@ interface InfoData { // object의 key들을 가져오기 위해 콘솔에 출력
   is_active: boolean ;
   type: string ;
   logo: string ;
-//  tags: object ; 이 둘은 실제로 object로 구성된 array. array의 경우 object로 출력되므로, array인 경우 추가로 interface를 정의해야 한다. ex) tags: Itag[]; -> ITag라는 inteface의 array라는 의미.
-//  team: object ;
   description: string ;
   message: string ;
   open_source: boolean ;
@@ -125,17 +142,19 @@ function Coin () {
   const {coinId} = useParams(); 
   const [loading, setLoading] = useState(true);
   const {state} = useLocation() as LocationState; 
-  const [info, setInfo] = useState<InfoData>(); // typescript에 info가 InfoData interfac를 따른다는 것을 알린다. <InfoData>를 추가하지 않으면 typescript는 info가 뭔지 모른다.
+  const [info, setInfo] = useState<InfoData>();
   const [priceInfo, setPriceInfo] = useState<PriceData>();
+  const priceMatch = useMatch("/:coinId/price"); // useMatch hook. react-router-dom v6 이전에는 useRouteMatch. 특정 url이 일치하는지를 보여줌. 일치하면 object를, 일치하지 않으면 null.
+  const chartMatch = useMatch("/:coinId/chart") 
   useEffect(() => {   
     (async () => {
       const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
       const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
       setInfo(infoData);
       setPriceInfo(priceData);
-      setLoading(false); // API로부터 request하고나서는 setLoading을 false 처리해줘야 한다.
+      setLoading(false); 
     })();
-  }, [coinId]); // [coinId] -> coinId가 변할 때만 함수 실행. hook의 최고 성능을 이끌어내기 위해서는 hook 안에 사용된 것은 dependency([]) 안에 넣어줘야 한다. 현재 코드에서는 비어도 된다([]). coinId는 url에 위치하므로 절대 변하지 않기 때문에..
+  }, [coinId]);
   return <Container>
   <Header>
     <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title> 
@@ -169,6 +188,14 @@ function Coin () {
               <span>{priceInfo?.max_supply}</span>
             </OverviewItem>
           </Overview>
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to={`/${coinId}/chart`}>chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null }>
+              <Link to={`/${coinId}/price`}>price</Link>
+            </Tab>
+          </Tabs>
           <Outlet />
         </>
       )}
