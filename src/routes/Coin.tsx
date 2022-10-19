@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import {useParams, useLocation, Outlet, Link, useMatch} from "react-router-dom";
 import styled from "styled-components";
 
+const HomeBtn = styled.button`
+  width: 80px;
+  height: 35px;
+  border-radius: 10px;
+`;
+
 const Container = styled.div`
   padding: 0px 10px;
   max-width: 480px;
@@ -59,7 +65,7 @@ const Tab = styled.span<{isActive : boolean}>` // <{isActive : boolean}> => isAc
   background-color: rgba(0, 0, 0, 0.5);
   padding: 7px 0px;
   border-radius: 8px;
-  color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor};
+  color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor}; //위에 isActive prop을 추가하여 하단의 <Tab> 컴포넌트에서 값(isActive={chartMatch !== null})을 입력받는다. 입력받는 값이 true이면 theme의 accentColor을, 아니라면 textColor을 적용한다.
   a {
     display: block;
   }
@@ -157,7 +163,10 @@ function Coin () {
   }, [coinId]);
   return <Container>
   <Header>
-    <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title> 
+    <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
+    <HomeBtn>
+      <Link to="/">Home</Link>
+    </HomeBtn>
   </Header>
   {loading ? (
         <Loader>Loading...</Loader>
