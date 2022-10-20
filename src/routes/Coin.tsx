@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import {useParams, useLocation, Outlet, Link, useMatch} from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoinInfo, fetchCoinTickers } from "./Api";
 
 const HomeBtn = styled.button`
-  width: 80px;
-  height: 35px;
+  width: 60px;
+  height: 30px;
   border-radius: 10px;
 `;
 
@@ -146,12 +148,12 @@ interface PriceData {
 
 function Coin () {
   const {coinId} = useParams(); 
-  const [loading, setLoading] = useState(true);
-  const {state} = useLocation() as LocationState; 
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
+  const {state} = useLocation() as LocationState;
   const priceMatch = useMatch("/:coinId/price"); // useMatch hook. react-router-dom v6 이전에는 useRouteMatch. 특정 url이 일치하는지를 보여줌. 일치하면 object를, 일치하지 않으면 null.
   const chartMatch = useMatch("/:coinId/chart") 
+  /* const [loading, setLoading] = useState(true); 
+  const [info, setInfo] = useState<InfoData>();
+  const [priceInfo, setPriceInfo] = useState<PriceData>();
   useEffect(() => {   
     (async () => {
       const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
@@ -160,10 +162,13 @@ function Coin () {
       setPriceInfo(priceData);
       setLoading(false); 
     })();
-  }, [coinId]);
+  }, [coinId]); */
+  const {isLoading: infoLoading, data: infoData} = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId!)) // coinId는 useParams()로 string || undefined라 오류가 발생하는데, 뒤에 !를 붙여주면 이는 확장 할당 어션셜로 값이 무조건 할당되어있다고 컴파일러에게 전달해 값이 없어도 변수를 사용할 수 있게 한다.
+  const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(["ticker", coinId], () => fetchCoinTickers(coinId!)); // {isLoading: tickersLoading, data: tickersData} => 그대로 쓰면 서로 겹치니깐 재명명하는 작업.
+  const loading = infoLoading || tickersLoading;
   return <Container>
   <Header>
-    <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
+    <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
     <HomeBtn>
       <Link to="/">Home</Link>
     </HomeBtn>
@@ -175,26 +180,26 @@ function Coin () {
           <Overview>
             <OverviewItem>
               <span>Rank:</span>
-              <span>{info?.rank}</span>
+              <span>{infoData?.rank}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Symbol:</span>
-              <span>${info?.symbol}</span>
+              <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Open Source:</span>
-              <span>{info?.open_source ? "Yes" : "No"}</span>
+              <span>{infoData?.open_source ? "Yes" : "No"}</span>
             </OverviewItem>
           </Overview>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
               <span>Total Suply:</span>
-              <span>{priceInfo?.total_supply}</span>
+              <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{priceInfo?.max_supply}</span>
+              <span>{tickersData ?.max_supply}</span>
             </OverviewItem>
           </Overview>
           <Tabs>

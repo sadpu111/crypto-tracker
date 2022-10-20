@@ -79,7 +79,7 @@ function Coins () {
         setLoding(false);
       })();
     }, []);  // react query를 사용하면서 api.ts에 fetchCoins 함수로 대체*/
-  const {isLoading, data} = useQuery<ICoin[]>(["allCoins"], fetchCoins); // useQuery를 통해 fetcher함수(여기서는 fetchCoins)를 전달인자로 받아 실행하는데, isLoading으로 읽어오는 중인지 여부를 판단하고, 로딩이 끝나면 해당 데이터(json)을 data로 받아온다. 얘도 마찬가지로 typescript에 데이터의 타입을 전달하기 위해 ICoin이라는 interface 적용. 
+  const {isLoading, data} = useQuery<ICoin[]>(["allCoins"], fetchCoins); // useQuery를 통해 fetcher함수(여기서는 fetchCoins)를 전달인자로 받아 실행하는데, isLoading으로 읽어오는 중인지 여부를 판단하고, 로딩이 끝나면 해당 데이터(json)을 data로 받아온다. 얘도 마찬가지로 typescript에 데이터의 타입을 전달하기 위해 ICoin이라는 interface 적용. react qeury는 cahce에 로딩된 데이터를 저장하여 한번 로딩하면 저장했던 cache애서 바로 불러온다.
   return (
     <Container>
       <Header>
