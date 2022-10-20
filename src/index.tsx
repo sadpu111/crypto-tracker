@@ -9,7 +9,7 @@ const queryClient = new QueryClient(); // react-query를 사용하기 위한 작
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
-  <QueryClientProvider client={queryClient }>
+  <QueryClientProvider client={queryClient}>
     <ThemeProvider theme={theme}>  
       <App />
     </ThemeProvider>

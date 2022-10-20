@@ -10,10 +10,14 @@ export function fetchCoins () { // promise 방법
   return fetch(`${BASE_URL}/coins`).then((response) => response.json());
 }
 
-export function fetchCoinInfo (coinId:string) {
+export function fetchCoinInfo (coinId:string) { // info data fetcher
   return fetch(`${BASE_URL}/coins/${coinId}`).then((response) => response.json());
 }
 
-export function fetchCoinTickers (coinId:string) {
+export function fetchCoinTickers (coinId:string) { // price data fetcher
   return fetch(`${BASE_URL}/tickers/${coinId}`).then((response) => response.json());
+}
+
+export async function fetchCoinHistory (coinId:string) { // cahrt 컴포넌트에 사용될 fetcher
+  return fetch(`https://ohlcv-api.nomadcoders.workers.dev?coinId=${coinId}`).then((response) => response.json()); 
 }
