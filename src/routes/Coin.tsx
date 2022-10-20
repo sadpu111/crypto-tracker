@@ -210,7 +210,7 @@ function Coin () {
               <Link to={`/${coinId}/price`}>price</Link>
             </Tab>
           </Tabs>
-          <Outlet context={{coinId:`${coinId}`}} />
+          <Outlet context={{coinId}} />
         </>
       )}
   </Container>;
