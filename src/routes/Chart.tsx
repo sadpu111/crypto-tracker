@@ -9,14 +9,14 @@ interface ChartProps {
 }
 
 interface IHistoricalData {
-  time_open: number;
-  time_close: number;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
-  volume: string;
-  market_cap: number;
+    time_open: string;
+    time_close: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
+    market_cap: number;
 }
 // useQuery<IHistoricalData[]> => data는 IHistoricalData interface의 배열
 function Chart() {
@@ -28,19 +28,45 @@ function Chart() {
     type="line" 
     series={[
       {
-        name: "hello",
-        data: [1,2,3,4,5,6], 
+        name: "Price",
+        data: data?.map(price => price.close) as number[], // data prop은 number 타입을 받아야되는데, 못읽어올 경우 undefined가 되는 문제로 오류 발생. 그래서 후단의 as number[] 로 강제 타입 변형.
       },
-      {
-        name: "sales",
-        data: [11,12,17,16,19,20], 
-      }
     ]}
     options={{
+      
+      theme: {
+        mode: "dark",
+      },
       chart: {
         height: 500,
         width: 500,
-    }}}>
+        toolbar: {
+          show: false,
+        },
+        background: "transparent",
+      },
+      grid: {
+        show: false
+      },
+      yaxis: {
+        show: false
+      },
+      xaxis: {
+        labels: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        }
+      },
+      stroke: {
+        curve: "smooth",
+        width: 3,
+      }
+    }}>
     </ApexCahrt>
   }
   </div>
