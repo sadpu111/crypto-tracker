@@ -60,11 +60,25 @@ function Chart() {
         },
         axisBorder: {
           show: false,
-        }
+        },
+         type: "datetime",
+         categories: data?.map(date => new Date(Number(date.time_close) * 1000).toISOString()) // 지금 활용하는 API의 time_close는 초단위 & string 타입이므로, 먼저 Number로 형변환 후 날짜로 변환.
       },
       stroke: {
         curve: "smooth",
         width: 3,
+      },
+      fill : {
+        type: "gradient", gradient: {
+          gradientToColors: ["#0be881"],
+          stops: [1, 100]
+        }
+      },
+      colors: ["#0fbcf9"],
+      tooltip: {
+        y: {
+          formatter: (value) => `$${value.toFixed(1)}`
+        }
       }
     }}>
     </ApexCahrt>
