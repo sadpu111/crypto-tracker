@@ -26,7 +26,7 @@ interface ICandleChartItem {
 // useQuery<IHistoricalData[]> => data는 IHistoricalData interface의 배열
 function Chart() {
   const {coinId} = useOutletContext<ChartProps>()
-  const {isLoading, data} = useQuery<IHistoricalData[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId))
+  const {isLoading, data} = useQuery<IHistoricalData[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
   return <div>{isLoading ? "Loading Chart..." : <>
     <ApexCahrt 
     type="line" 

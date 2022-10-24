@@ -4,14 +4,13 @@ import {useParams, useLocation, Outlet, Link, useMatch} from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "./Api";
 import {Helmet} from "react-helmet"
-import Chart from "./Chart";
 
 
 
 const HomeBtn = styled.button`
   width: 60px;
   height: 30px;
-  border-radius: 5px;
+  border-radius: 10px;
 `;
 
 const Container = styled.div`
@@ -39,7 +38,7 @@ const Overview = styled.div`
   justify-content: space-between;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 20px 20px;
-  border-radius: 5px;
+  border-radius: 10px;
   margin-bottom: 20px;
 `;
 const OverviewItem = styled.div` 
@@ -71,7 +70,7 @@ const Tab = styled.span<{isActive : boolean}>` // <{isActive : boolean}> => isAc
   font-weight: 400;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 12px 0px;
-  border-radius: 5px;
+  border-radius: 10px;
   color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor}; //위에 isActive prop을 추가하여 하단의 <Tab> 컴포넌트에서 값(isActive={chartMatch !== null})을 입력받는다. 입력받는 값이 true이면 theme의 accentColor을, 아니라면 textColor을 적용한다.
   a {
     display: block;
@@ -225,7 +224,7 @@ function Coin () {
               <Link to={`/${coinId}/price`}>price</Link>
             </Tab>
           </Tabs>
-          <Outlet context={{coinId}} />
+          <Outlet context={{coinId, tickersData}} />
         </>
       )}
   </Container>;
