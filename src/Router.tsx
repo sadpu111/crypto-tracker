@@ -14,7 +14,7 @@ function Router () {
       </Route>
       <Route path="/:coinId" element={<Coin />}>
         <Route path="/:coinId/chart" element={<Chart />}></Route> 
-        <Route path="price" element={<Price/>}></Route>
+        <Route path="price" element={<Price />}></Route>
       </Route>
     </Routes>
   </BrowserRouter>
