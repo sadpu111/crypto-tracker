@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components"
 import { fetchCoins } from "./Api";
-
+import { Helmet } from "react-helmet";
 
 const Loader = styled.span`
   text-align: center;
@@ -37,10 +37,10 @@ const Coin = styled.li`
   margin-bottom: 10px;
   border-radius: 10px;
   a { // Coin 컴포넌트 내의 anchor는 아래와 같은 스타일 적용
-    display: flex; // 링크뿐만 아니라 영역을 눌러도 이동
+    display: flex; 
     align-items: center;
     transition: color 0.2s ease-in; // 색이 전환(변화)되는데 0.2초 지연 및 ease-in 효과
-    padding: 20px;
+    padding: 15px;
   }
   &:hover { // event 추가문법.
     a {
@@ -82,6 +82,9 @@ function Coins () {
   const {isLoading, data} = useQuery<ICoin[]>(["allCoins"], fetchCoins); // useQuery를 통해 fetcher함수(여기서는 fetchCoins)를 전달인자로 받아 실행하는데, isLoading으로 읽어오는 중인지 여부를 판단하고, 로딩이 끝나면 해당 데이터(json)을 data로 받아온다. 얘도 마찬가지로 typescript에 데이터의 타입을 전달하기 위해 ICoin이라는 interface 적용. react qeury는 cahce에 로딩된 데이터를 저장하여 한번 로딩하면 저장했던 cache애서 바로 불러온다.
   return (
     <Container>
+      <Helmet>
+        <title>Crypto Currency</title>
+       </Helmet>
       <Header>
         <Title>Crypto Currency</Title>
       </Header>
@@ -89,7 +92,7 @@ function Coins () {
         <CoinsList>
         {data?.slice(0, 100).map((coin) => (
         <Coin key={coin.id}>
-          <Link to={`/${coin.id}`} state={coin}> 
+          <Link to={`/${coin.id}/chart`} state={coin}> 
             <Img src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}></Img>
             {coin.name} &rarr;</Link> 
         </Coin>))}

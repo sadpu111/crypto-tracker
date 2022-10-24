@@ -3,6 +3,10 @@ import { useQuery } from "react-query";
 import {useParams, useLocation, Outlet, Link, useMatch} from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "./Api";
+import {Helmet} from "react-helmet"
+import Chart from "./Chart";
+
+
 
 const HomeBtn = styled.button`
   width: 60px;
@@ -34,8 +38,9 @@ const Overview = styled.div`
   display: flex;
   justify-content: space-between;
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 10px 20px;
+  padding: 20px 20px;
   border-radius: 10px;
+  margin-bottom: 20px;
 `;
 const OverviewItem = styled.div` 
   display: flex;
@@ -49,7 +54,7 @@ const OverviewItem = styled.div`
   }
 `;
 const Description = styled.p`
-  margin: 20px 0px;
+  line-height: 20px;
 `;
 
 const Tabs = styled.div`
@@ -65,11 +70,16 @@ const Tab = styled.span<{isActive : boolean}>` // <{isActive : boolean}> => isAc
   font-size: 12px;
   font-weight: 400;
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 7px 0px;
+  padding: 12px 0px;
   border-radius: 8px;
   color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor}; //위에 isActive prop을 추가하여 하단의 <Tab> 컴포넌트에서 값(isActive={chartMatch !== null})을 입력받는다. 입력받는 값이 true이면 theme의 accentColor을, 아니라면 textColor을 적용한다.
   a {
     display: block;
+  }
+  &:hover { // event 추가문법.
+    a {
+      color: ${(props) => props.theme.accentColor};
+    }
   }
 `;
 
@@ -164,9 +174,12 @@ function Coin () {
     })();
   }, [coinId]); */
   const {isLoading: infoLoading, data: infoData} = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId!)) // coinId는 useParams()로 string || undefined라 오류가 발생하는데, 뒤에 !를 붙여주면 이는 확장 할당 어션셜로 값이 무조건 할당되어있다고 컴파일러에게 전달해 값이 없어도 변수를 사용할 수 있게 한다.
-  const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(["ticker", coinId], () => fetchCoinTickers(coinId!)); // {isLoading: tickersLoading, data: tickersData} => 그대로 쓰면 서로 겹치니깐 재명명하는 작업.
+  const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(["ticker", coinId], () => fetchCoinTickers(coinId!), {refetchInterval: 5000}); // {isLoading: tickersLoading, data: tickersData} => 그대로 쓰면 서로 겹치니깐 재명명하는 작업. 3번째 argument는 선택적인 것으로, refetch interval을 설정할 수 있다. 단위는 밀리세컨드로 3000은 3초 간격. 즉, 3초마다 값을 새로 읽어온다.
   const loading = infoLoading || tickersLoading;
   return <Container>
+  <Helmet>
+    <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
+  </Helmet>
   <Header>
     <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
     <HomeBtn>
@@ -187,11 +200,13 @@ function Coin () {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>Price</span>
+              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
-          <Description>{infoData?.description}</Description>
+          <Overview>
+            <Description>{infoData?.description}</Description>
+          </Overview>
           <Overview>
             <OverviewItem>
               <span>Total Suply:</span>
