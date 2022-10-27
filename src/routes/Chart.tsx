@@ -6,6 +6,7 @@ import ApexCahrt from "react-apexcharts"; // 공식문서에서는 Chart를 impo
 
 interface ChartProps {
   coinId: string;
+  isDark: boolean;
 }
 
 interface IHistoricalData {
@@ -25,7 +26,7 @@ interface ICandleChartItem {
 
 // useQuery<IHistoricalData[]> => data는 IHistoricalData interface의 배열
 function Chart() {
-  const {coinId} = useOutletContext<ChartProps>()
+  const {coinId, isDark} = useOutletContext<ChartProps>()
   const {isLoading, data} = useQuery<IHistoricalData[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
   return <div>{isLoading ? "Loading Chart..." : <>
     <ApexCahrt 
@@ -39,7 +40,7 @@ function Chart() {
     options={{
       
       theme: {
-        mode: "dark",
+        mode: isDark? "dark" : "light"
       },
       chart: {
         height: 500,
@@ -100,7 +101,7 @@ function Chart() {
             options={{
             
       theme: {
-        mode: "dark",
+        mode: isDark? "dark" : "light"
       },
       chart: {
         height: 500,

@@ -65,17 +65,17 @@ a {
   text-decoration: none;
   color: inherit;
 }
-`
+`;
+
 // <></> 는 fragment로 빈 태그(유령태그)이다. 원칙적으로는 단 하나의 element를 리턴해야하므로, <GlobalStyle /> 까지 포함하여 리턴하려면 원래는 <div>태그로 묶어야하지만, 그럴 경우 <div>태그가 너무 남발되어 비효율적. 그래서 fragment라는 유령태그로 감싸준다.
 function App() {
   const [isDark, setDark] = useState(false);
-  const toggleDark = () => setDark((current) =>  !current);
+  const toggleDark = () => setDark((current) => !current); // BrowserRouter로 해당 함수를 넘겨줘야 하는데, 그러기 위해서 interface 작성 필요
   return (
     <>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        <button onClick={toggleDark}>Toggle dark</button>
         <GlobalStyle />
-        <BrowserRouter />
+        <BrowserRouter isDark={isDark} toggleDark={toggleDark}/>
       </ThemeProvider>
     </>
   )

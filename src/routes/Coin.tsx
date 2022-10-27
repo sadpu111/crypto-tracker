@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import {useParams, useLocation, Outlet, Link, useMatch} from "react-router-dom";
+import { useParams, useLocation, Outlet, Link, useMatch } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "./Api";
-import {Helmet} from "react-helmet"
+import { Helmet } from "react-helmet"
 
-
+interface ICoinProps {
+  isDark: boolean;
+}
 
 const HomeBtn = styled.button`
   width: 60px;
@@ -36,7 +38,8 @@ const Title = styled.h1`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.cardBgColor};
+  border: 1px solid white;
   padding: 20px 20px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -63,14 +66,15 @@ const Tabs = styled.div`
   gap: 10px;
 `;
 
-const Tab = styled.span<{isActive : boolean}>` // <{isActive : boolean}> => isActive라는 prop을 추가하며 이는 boolean 타입이다. 이를 하단의 priveMatch와 cahrtMatch로 전달할 수 있다.
+const Tab = styled.span<{ isActive: boolean }>` // <{isActive : boolean}> => isActive라는 prop을 추가하며 이는 boolean 타입이다. 이를 하단의 priveMatch와 cahrtMatch로 전달할 수 있다.
   text-align: center;
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 400;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.cardBgColor};
   padding: 12px 0px;
   border-radius: 10px;
+  border: 1px solid white;
   color: ${props => props.isActive ? props.theme.accentColor : props.theme.textColor}; //위에 isActive prop을 추가하여 하단의 <Tab> 컴포넌트에서 값(isActive={chartMatch !== null})을 입력받는다. 입력받는 값이 true이면 theme의 accentColor을, 아니라면 textColor을 적용한다.
   a {
     display: block;
@@ -82,7 +86,7 @@ const Tab = styled.span<{isActive : boolean}>` // <{isActive : boolean}> => isAc
   }
 `;
 
-interface LocationState { 
+interface LocationState {
   state: {
     id: string;
     name: string;
@@ -94,72 +98,72 @@ interface LocationState {
   }
 };
 
- 
 
-interface InfoData { 
-  id:string ;
-  name: string ;
-  symbol: string ;
-  rank: number ;
-  is_new: boolean ;
-  is_active: boolean ;
-  type: string ;
-  logo: string ;
-  description: string ;
-  message: string ;
-  open_source: boolean ;
-  started_at: string ;
-  development_status: string ;
-  hardware_wallet: boolean ;
-  proof_type: string ;
-  org_structure: string ; 
-  hash_algorithm: string ;
-  links: object ;
-  links_extended: object ;
-  whitepaper: object ;
-  first_data_at: string ;
-  last_data_at: string ;
+
+interface InfoData {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+  logo: string;
+  description: string;
+  message: string;
+  open_source: boolean;
+  started_at: string;
+  development_status: string;
+  hardware_wallet: boolean;
+  proof_type: string;
+  org_structure: string;
+  hash_algorithm: string;
+  links: object;
+  links_extended: object;
+  whitepaper: object;
+  first_data_at: string;
+  last_data_at: string;
 }
- 
+
 export interface PriceData {
-  id:string ;
-  name: string ;
-  symbol: string ;
-  rank: number ;
-  circulating_supply: number ;
-  total_supply: number ;
-  max_supply: number ;
-  beta_value: number ;
-  first_data_at: string ;
-  last_updated: string ;
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  beta_value: number;
+  first_data_at: string;
+  last_updated: string;
   quotes: {
     USD: {
-      price:number ;
-      volume_24h:number ;
-      volume_24h_change_24h:number ;
-      market_cap:number ;
-      market_cap_change_24h:number ;
-      percent_change_15m:number ;
-      percent_change_30m:number ;
-      percent_change_1h:number ;
-      percent_change_6h:number ;
-      percent_change_12h:number ;
-      percent_change_24h:number ;
-      percent_change_7d:number ;
-      percent_change_30d:number ;
-      percent_change_1y:number ;
-      ath_price:number ;
-      ath_date:string ;
-      percent_from_price_ath:number ;
+      price: number;
+      volume_24h: number;
+      volume_24h_change_24h: number;
+      market_cap: number;
+      market_cap_change_24h: number;
+      percent_change_15m: number;
+      percent_change_30m: number;
+      percent_change_1h: number;
+      percent_change_6h: number;
+      percent_change_12h: number;
+      percent_change_24h: number;
+      percent_change_7d: number;
+      percent_change_30d: number;
+      percent_change_1y: number;
+      ath_price: number;
+      ath_date: string;
+      percent_from_price_ath: number;
     }
-  } ;
+  };
 }
 
-function Coin () {
-  const {coinId} = useParams(); 
-  const {state} = useLocation() as LocationState;
+function Coin({ isDark }: ICoinProps) {
+  const { coinId } = useParams();
+  const { state } = useLocation() as LocationState;
   const priceMatch = useMatch("/:coinId/price"); // useMatch hook. react-router-dom v6 이전에는 useRouteMatch. 특정 url이 일치하는지를 보여줌. 일치하면 object를, 일치하지 않으면 null.
-  const chartMatch = useMatch("/:coinId/chart") 
+  const chartMatch = useMatch("/:coinId/chart")
   /* const [loading, setLoading] = useState(true); 
   const [info, setInfo] = useState<InfoData>();
   const [priceInfo, setPriceInfo] = useState<PriceData>();
@@ -172,62 +176,62 @@ function Coin () {
       setLoading(false); 
     })();
   }, [coinId]); */
-  const {isLoading: infoLoading, data: infoData} = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId!)) // coinId는 useParams()로 string || undefined라 오류가 발생하는데, 뒤에 !를 붙여주면 이는 확장 할당 어션셜로 값이 무조건 할당되어있다고 컴파일러에게 전달해 값이 없어도 변수를 사용할 수 있게 한다.
-  const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(["ticker", coinId], () => fetchCoinTickers(coinId!), {refetchInterval: 5000}); // {isLoading: tickersLoading, data: tickersData} => 그대로 쓰면 서로 겹치니깐 재명명하는 작업. 3번째 argument는 선택적인 것으로, refetch interval을 설정할 수 있다. 단위는 밀리세컨드로 3000은 3초 간격. 즉, 3초마다 값을 새로 읽어온다.
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId!)) // coinId는 useParams()로 string || undefined라 오류가 발생하는데, 뒤에 !를 붙여주면 이는 확장 할당 어션셜로 값이 무조건 할당되어있다고 컴파일러에게 전달해 값이 없어도 변수를 사용할 수 있게 한다.
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(["ticker", coinId], () => fetchCoinTickers(coinId!), { refetchInterval: 5000 }); // {isLoading: tickersLoading, data: tickersData} => 그대로 쓰면 서로 겹치니깐 재명명하는 작업. 3번째 argument는 선택적인 것으로, refetch interval을 설정할 수 있다. 단위는 밀리세컨드로 3000은 3초 간격. 즉, 3초마다 값을 새로 읽어온다.
   const loading = infoLoading || tickersLoading;
   return <Container>
-  <Helmet>
-    <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
-  </Helmet>
-  <Header>
-    <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
-    <HomeBtn>
-      <Link to="/">Home</Link>
-    </HomeBtn>
-  </Header>
-  {loading ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <>
-          <Overview>
-            <OverviewItem>
-              <span>Rank:</span>
-              <span>{infoData?.rank}</span>
-            </OverviewItem>
-            <OverviewItem>
-              <span>Symbol:</span>
-              <span>${infoData?.symbol}</span>
-            </OverviewItem>
-            <OverviewItem>
-              <span>Price</span>
-              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
-            </OverviewItem>
-          </Overview>
-          <Overview>
-            <Description>{infoData?.description}</Description>
-          </Overview>
-          <Overview>
-            <OverviewItem>
-              <span>Total Suply:</span>
-              <span>{tickersData?.total_supply}</span>
-            </OverviewItem>
-            <OverviewItem>
-              <span>Max Supply:</span>
-              <span>{tickersData ?.max_supply}</span>
-            </OverviewItem>
-          </Overview>
-          <Tabs>
-            <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`}>chart</Link>
-            </Tab>
-            <Tab isActive={priceMatch !== null }>
-              <Link to={`/${coinId}/price`}>price</Link>
-            </Tab>
-          </Tabs>
-          <Outlet context={{coinId, tickersData}} />
-        </>
-      )}
+    <Helmet>
+      <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
+    </Helmet>
+    <Header>
+      <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
+      <HomeBtn>
+        <Link to="/">Home</Link>
+      </HomeBtn>
+    </Header>
+    {loading ? (
+      <Loader>Loading...</Loader>
+    ) : (
+      <>
+        <Overview>
+          <OverviewItem>
+            <span>Rank:</span>
+            <span>{infoData?.rank}</span>
+          </OverviewItem>
+          <OverviewItem>
+            <span>Symbol:</span>
+            <span>${infoData?.symbol}</span>
+          </OverviewItem>
+          <OverviewItem>
+            <span>Price</span>
+            <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
+          </OverviewItem>
+        </Overview>
+        <Overview>
+          <Description>{infoData?.description}</Description>
+        </Overview>
+        <Overview>
+          <OverviewItem>
+            <span>Total Suply:</span>
+            <span>{tickersData?.total_supply}</span>
+          </OverviewItem>
+          <OverviewItem>
+            <span>Max Supply:</span>
+            <span>{tickersData?.max_supply}</span>
+          </OverviewItem>
+        </Overview>
+        <Tabs>
+          <Tab isActive={chartMatch !== null}>
+            <Link to={`/${coinId}/chart`}>chart</Link>
+          </Tab>
+          <Tab isActive={priceMatch !== null}>
+            <Link to={`/${coinId}/price`}>price</Link>
+          </Tab>
+        </Tabs>
+        <Outlet context={{ coinId, tickersData, isDark }} />
+      </>
+    )}
   </Container>;
-} 
+}
 
 export default Coin

@@ -22,7 +22,9 @@ const AthInfo = styled.div`
 	grid-column: 1 / 3;
 	grid-row: 1 / 3;
 	justify-content: space-between;
-  background-color:rgba(0, 0, 0, 0.5);	border-radius: 0.7rem;
+  background-color:${(props) => props.theme.cardBgColor};
+  border-radius: 0.7rem;
+  border: 1px solid white;
   span {
     &:first-child {
       text-align: center;
@@ -43,15 +45,16 @@ const PriceInfo = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  background-color:rgba(0, 0, 0, 0.5);
+  background-color:${(props) => props.theme.cardBgColor};
   padding: 30px 20px;
   border-radius: 10px;
+  border: 1px solid white;
   color: ${(props) => props.theme.bgColor};
   span {
     &:first-child {
       text-transform: uppercase;
       font-weight: 600;
-      color: white;
+      color: ${(props) => props.theme.textColor};;
     }
     &:last-child {
       margin-top: 20px;
