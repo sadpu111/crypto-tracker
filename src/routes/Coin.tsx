@@ -6,7 +6,6 @@ import { fetchCoinInfo, fetchCoinTickers } from "./Api";
 import { Helmet } from "react-helmet"
 
 interface ICoinProps {
-  isDark: boolean;
 }
 
 const HomeBtn = styled.button`
@@ -159,7 +158,7 @@ export interface PriceData {
   };
 }
 
-function Coin({ isDark }: ICoinProps) {
+function Coin({  }: ICoinProps) {
   const { coinId } = useParams();
   const { state } = useLocation() as LocationState;
   const priceMatch = useMatch("/:coinId/price"); // useMatch hook. react-router-dom v6 이전에는 useRouteMatch. 특정 url이 일치하는지를 보여줌. 일치하면 object를, 일치하지 않으면 null.
@@ -228,7 +227,7 @@ function Coin({ isDark }: ICoinProps) {
             <Link to={`/${coinId}/price`}>price</Link>
           </Tab>
         </Tabs>
-        <Outlet context={{ coinId, tickersData, isDark }} />
+        <Outlet context={{ coinId, tickersData }} />
       </>
     )}
   </Container>;

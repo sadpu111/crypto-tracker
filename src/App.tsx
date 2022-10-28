@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import BrowserRouter from "./Router";
+import { isDarkAtom } from "./routes/atoms";
 import { darkTheme, lightTheme } from "./theme";
 
 const GlobalStyle = createGlobalStyle` // 전역 style component. 적용하려면 컴포넌트에 추가하여 리턴. 아래 내용은 Reser css로 모든 스타일을 제거한 코드. 
@@ -69,13 +71,12 @@ a {
 
 // <></> 는 fragment로 빈 태그(유령태그)이다. 원칙적으로는 단 하나의 element를 리턴해야하므로, <GlobalStyle /> 까지 포함하여 리턴하려면 원래는 <div>태그로 묶어야하지만, 그럴 경우 <div>태그가 너무 남발되어 비효율적. 그래서 fragment라는 유령태그로 감싸준다.
 function App() {
-  const [isDark, setDark] = useState(false);
-  const toggleDark = () => setDark((current) => !current); // BrowserRouter로 해당 함수를 넘겨줘야 하는데, 그러기 위해서 interface 작성 필요
+  const isDark = useRecoilValue(isDarkAtom);
   return (
     <>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyle />
-        <BrowserRouter isDark={isDark} toggleDark={toggleDark}/>
+        <BrowserRouter />
       </ThemeProvider>
     </>
   )

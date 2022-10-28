@@ -6,7 +6,6 @@ import { fetchCoins } from "./Api";
 import { Helmet } from "react-helmet";
 
 interface ICoinsProps {
-  toggleDark: () => void; // Router.tsx에서 전달받은 toggleDark. 똑같이 반복
 }
 
 const Loader = styled.span`
@@ -72,7 +71,7 @@ interface ICoin {
 
 
 // coin 컴포넌트를 클릭하면 <Link>태그를 통해 {`/${coin.id}`}라는 주소로 이동 -> Routers.tsx의 Router 컴포넌트에서 /:coinId 경로는 Coin.tsx의 Coin 컴포넌트를 랜더링하는 것으로 정의. 정리하면, Coin.tsx의 Coin 컴포넌트의 coinId와 Router.tsx의 Router 컴포넌트의 coinId는 useParams()로 연결되어있고, 이 coinId 자리에 Coins.tsx의 coin array의 id값을 전달하는 것.
-function Coins({toggleDark}: ICoinsProps ) {
+function Coins({}: ICoinsProps ) {
   /*   const [loading, setLoding] = useState(true);
     const [coins, setCoins] = useState<ICoin[]>([]); // <ICoin[]>를 추가하여 coins state가 해당 interface로 구성된 array라는 정보 전달. 이를 통해 하단의 coin.id, coin.name에서 오류 발생X. coins 전체는 배열, 각 coin의 데이터는 객체.
     useEffect(() => {
@@ -92,8 +91,7 @@ function Coins({toggleDark}: ICoinsProps ) {
       </Helmet>
       <Header>
         <Title>Crypto Currency</Title>
-        <button onClick={toggleDark}>Toggle dark</button>
-      </Header>
+       </Header>
       {isLoading ? <Loader>Loading...</Loader> :
         <CoinsList>
           {data?.slice(0, 100).map((coin) => (

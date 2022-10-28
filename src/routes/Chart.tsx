@@ -2,11 +2,13 @@ import { useQuery } from "react-query";
 import { fetchCoinHistory } from "./Api";
 import {useOutletContext} from "react-router-dom"
 import ApexCahrt from "react-apexcharts"; // 공식문서에서는 Chart를 import하라고 하지만 Chart 컴포넌트와 겹치기 떄문에 ApexChart로 improt 
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atoms";
 
 
 interface ChartProps {
   coinId: string;
-  isDark: boolean;
+
 }
 
 interface IHistoricalData {
@@ -26,7 +28,8 @@ interface ICandleChartItem {
 
 // useQuery<IHistoricalData[]> => data는 IHistoricalData interface의 배열
 function Chart() {
-  const {coinId, isDark} = useOutletContext<ChartProps>()
+  const {coinId} = useOutletContext<ChartProps>()
+  const isDark = useRecoilValue(isDarkAtom);
   const {isLoading, data} = useQuery<IHistoricalData[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
   return <div>{isLoading ? "Loading Chart..." : <>
     <ApexCahrt 
